@@ -1,60 +1,47 @@
-
-/* 
- * Usage : 
- * addPattern : Adds patterns to the trie structure.
- * build : Sets up the fail links via BFS.
- * search : Performs the search and returns the indices of patterns found in the text.
- * Time complexity : O(n + S(Ai))
+/*
+checked
 */
 
-class AhoCorasick {
-public:
-    AhoCorasick() { edges.push_back({}); fail.push_back(-1); output.push_back({}); }
+int nx[N][26];
+int suf_link[N], par[N];
+int leaf[N];
+int num_node = 0;
+int exlink[N];
 
-    void addPattern(const string& pattern, int idx) {
-        int node = 0;
-        for (char c : pattern) {
-            if (!edges[node].count(c)) {
-                edges[node][c] = edges.size();
-                edges.push_back({}); fail.push_back(-1); output.push_back({});
+
+int add(const string& s)
+{
+    int u = 0;
+    for (const char& c : s)
+    {
+        if (nx[u][c - 'a'] == -1) nx[u][c - 'a'] = ++num_node;
+        par[nx[u][c - 'a']] = u;
+        u = nx[u][c - 'a'];
+    }
+    leaf[u] = 1;
+    return u;
+}
+void build()
+{
+    queue<int> q;
+    q.push(0);
+    while (sz(q))
+    {
+        int u = q.front(); q.pop();
+        int v = suf_link[u];
+        if (leaf[v]) exlink[u] = v;
+        else exlink[u] = exlink[v];
+        for (int i = 0; i < 26; ++i)
+        {
+            int x = nx[u][i];
+            if (nx[u][i] == -1)
+                nx[u][i] = u == 0 ? 0 : nx[v][i];
+            else
+            {
+                suf_link[x] = u == 0 ? 0 : nx[v][i];
+                q.push(x);
             }
-            node = edges[node][c];
         }
-        output[node].insert(idx);
-    }
 
-    void build() {
-        queue<int> q;
-        for (auto& p : edges[0]) {
-            fail[p.second] = 0;
-            q.push(p.second);
-        }
-        while (!q.empty()) {
-            int state = q.front(); q.pop();
-            for (auto& p : edges[state]) {
-                char c = p.first;
-                int next = p.second, f = fail[state];
-                while (!edges[f].count(c)) f = fail[f];
-                fail[next] = edges[f][c];
-                output[next].insert(output[fail[next]].begin(), output[fail[next]].end());
-                q.push(next);
-            }
-        }
     }
-
-    vector<int> search(const string& text) {
-        vector<int> result(text.size(), -1);
-        int node = 0;
-        for (int i = 0; i < text.size(); ++i) {
-            while (!edges[node].count(text[i])) node = fail[node];
-            node = edges[node][text[i]];
-            for (int idx : output[node]) result[i] = idx;
-        }
-        return result;
-    }
-
-private:
-    vector<unordered_map<char, int>> edges;
-    vector<int> fail;
-    vector<set<int>> output;
-};
+}

@@ -1,79 +1,56 @@
-
-/* THIS IS POLLARD RHO AND I HAVE NO IDEA WHAT ITS USAGE IS */
-\
-
-unsigned long long mod_mul(unsigned long long a, unsigned long long b, unsigned long long mod) {
-    unsigned long long res = 0;
-    a %= mod;
-    while (b) {
-        if (b & 1) res = (res + a) % mod;
-        a = (2 * a) % mod;
-        b >>= 1;
-    }
+// checked
+ll mul(ll x, ll y, ll p) { return (x * y - (ll)((long double)x / p * y) * p + p) % p; } // __int128
+vector<ll> chk = { 2, 325, 9375, 28178, 450775, 9780504, 1795265022 };
+ll Pow(ll a, ll b, ll n) {
+    ll res = 1;
+    for (; b; b >>= 1, a = mul(a, a, n))
+        if (b & 1) res = mul(res, a, n);
     return res;
 }
-
-unsigned long long mod_exp(unsigned long long base, unsigned long long exp, unsigned long long mod) {
-    unsigned long long res = 1;
-    base %= mod;
-    while (exp) {
-        if (exp & 1) res = mod_mul(res, base, mod);
-        base = mod_mul(base, base, mod);
-        exp >>= 1;
+bool check(ll a, ll d, int s, ll n) {
+    a = Pow(a, d, n);
+    if (a <= 1) return 1;
+    for (int i = 0; i < s; ++i, a = mul(a, a, n)) {
+        if (a == 1) return 0;
+        if (a == n - 1) return 1;
     }
-    return res;
+    return 0;
 }
-
-unsigned long long gcd(unsigned long long a, unsigned long long b) {
-    return b ? gcd(b, a % b) : a;
-}
-
-bool miller_rabin(unsigned long long n, int iterations = 5) {
-    if (n < 4) return n == 2 || n == 3;
-    unsigned long long d = n - 1;
-    while (d % 2 == 0) d /= 2;
-    for (int i = 0; i < iterations; ++i) {
-        unsigned long long a = 2 + rand() % (n - 4);
-        unsigned long long x = mod_exp(a, d, n);
-        if (x == 1 || x == n - 1) continue;
-        bool is_composite = true;
-        for (unsigned long long temp = d; temp != n - 1; temp *= 2) {
-            x = mod_mul(x, x, n);
-            if (x == n - 1) {
-                is_composite = false;
+bool IsPrime(ll n) {
+    if (n < 2) return 0;
+    if (n % 2 == 0) return n == 2;
+    ll d = n - 1, s = 0;
+    while (d % 2 == 0) d >>= 1, s++;
+    for (ll i : chk) if (!check(i, d, s, n)) return 0;
+    return 1;
+} // 5761f3
+const vector<ll> small = { 2, 3, 5, 7, 11, 13, 17, 19 };
+ll FindFactor(ll n) {
+    if (IsPrime(n)) return 1;
+    for (ll p : small) if (n % p == 0) return p;
+    ll x, y = 2, d, t = 1;
+    auto f = [&](ll a) {return (mul(a, a, n) + t) % n; };
+    for (int l = 2; ; l <<= 1) {
+        x = y;
+        int m = min(l, 32);
+        for (int i = 0; i < l; i += m) {
+            d = 1;
+            for (int j = 0; j < m; ++j) {
+                y = f(y), d = mul(d, abs(x - y), n);
+            }
+            ll g = __gcd(d, n);
+            if (g == n) {
+                l = 1, y = 2, t++;
                 break;
             }
+            if (g != 1) return g;
         }
-        if (is_composite) return false;
     }
-    return true;
 }
-
-unsigned long long pollards_rho(unsigned long long n) {
-    if (n % 2 == 0) return 2;
-    unsigned long long x = 2, y = 2, d = 1, c = rand() % (n - 1) + 1;
-    while (d == 1) {
-        x = (mod_mul(x, x, n) + c) % n;
-        y = (mod_mul(mod_mul(y, y, n) + c, y, n) + c) % n;
-        d = gcd(x > y ? x - y : y - x, n);
-    }
-    return (d == n) ? pollards_rho(n) : d;
-}
-
-void factorize(unsigned long long n, std::vector<unsigned long long> &factors) {
+map <ll, int> res;
+void PollardRho(ll n) {
     if (n == 1) return;
-    if (miller_rabin(n)) {
-        factors.push_back(n);
-        return;
-    }
-    unsigned long long factor = pollards_rho(n);
-    factorize(factor, factors);
-    factorize(n / factor, factors);
-}
-
-std::vector<unsigned long long> get_prime_factors(unsigned long long n) {
-    std::vector<unsigned long long> factors;
-    factorize(n, factors);
-    std::sort(factors.begin(), factors.end());
-    return factors;
-}
+    if (IsPrime(n)) return res[n]++, void(0);
+    ll d = FindFactor(n);
+    PollardRho(n / d), PollardRho(d);
+} // 57e9e3
