@@ -2,8 +2,6 @@
 using ll = long long;
 using C = complex<double>;
 constexpr ll MOD = 998244353;
-
-
 static inline ll modpow(ll x, ll e) {
     ll r = 1 % MOD;
     while (e) {
@@ -12,16 +10,15 @@ static inline ll modpow(ll x, ll e) {
         e >>= 1;
     }
     return r;
-}
-static inline ll invmod(ll x) { return modpow(x, MOD - 2); }
 
+}
+
+static inline ll invmod(ll x) { return modpow(x, MOD - 2); }
 struct Poly {
     vector<ll> a;
     Poly(vector<ll> v = vector<ll>(0)) : a(v) {}
-
-    // ---------- modular helpers ----------
-
     // ---------- FFT (for convolution) ----------
+
     static void fft(vector<C> &f) {
         int n = (int)f.size(), L = 31 - __builtin_clz(n);
         static vector<complex<long double>> R(2, 1);
@@ -43,7 +40,6 @@ struct Poly {
                     f[i+j] += z;
                 }
     }
-
     // convolution using FFT-splitting trick (handles large MOD)
     static vector<ll> conv(const vector<ll>& A, const vector<ll>& B) {
         if (A.empty() || B.empty()) return {};
@@ -69,6 +65,7 @@ struct Poly {
             res[i] = (( (av * cut + bv) % MOD) * cut + cv) % MOD;
         }
         return res;
+
     }
 
     // ---------- operators ----------
@@ -117,23 +114,23 @@ struct Poly {
     // inverse assumes a[0] != 0
     Poly inv() const {
         assert(!a.empty() && a[0] != 0);
-        vector<ll> r(1, invmod(a[0]));
-        Poly R(r);
+        Poly R(vector<ll>{invmod(a[0])});
+
         int n = (int)a.size();
-        for (int d = 2; d <= n; d <<= 1) {
-            vector<ll> f(min((int)a.size(), d));
-            for (int i = 0; i < (int)f.size(); ++i) f[i] = a[i];
+        int d = 1;
+        while (d < n) {
+            d <<= 1;
+            vector<ll> f(d);
+            for (int i = 0; i < (int)min(f.size(), a.size()); ++i) f[i] = a[i];
             Poly F(f);
-            Poly G = R * F; G.mod_xk(d);
-            vector<ll> h(d);
-            for (int i = 0; i < d; ++i) {
-                ll val = (i < (int)G.a.size() ? G.a[i] : 0);
-                h[i] = ( (i==0 ? 2 : 0) * R.a[0] - val ) % MOD;
-                if (h[i] < 0) h[i] += MOD;
-            }
-            Poly H(h);
-            Poly newR = R * H; newR.mod_xk(d);
-            R.a = newR.a;
+
+            Poly FR = F * R;
+            FR.mod_xk(d);
+            for (auto &x : FR.a)
+                x = (MOD - x) % MOD;
+            FR.a[0] = (FR.a[0] + 2) % MOD;
+            R = R * FR;
+            R.mod_xk(d);
         }
         R.mod_xk(n);
         return R;
@@ -151,23 +148,25 @@ struct Poly {
     // helper for chaining mod_xk without mutating original
     Poly mod_xk_here(int k) const { Poly r = *this; r.mod_xk(k); return r; }
 
-    // exp assumes a[0] == 0
     Poly exp() const {
         assert(!a.empty() && a[0] == 0);
-        Poly R(vector<ll>{1});
-        int n = (int)a.size();
-        for (int d = 2; d <= 4*n; d <<= 1) {
-            int take = min((int)a.size(), d);
-            vector<ll> f(take);
-            for (int i = 0; i < take; ++i) f[i] = a[i];
-            Poly F(f);
-            Poly t = R.log(d);
-            vector<ll> one = {1};
-            Poly tmp = Poly(one) + F - t;
-            Poly nxt = R * tmp;
-            nxt.mod_xk(d);
-            R.a = nxt.a;
+        Poly R({1});
+        int n = a.size();
+        for (int len = 2; ; len <<= 1) {
+            R.a.resize(len, 0);
+            Poly Ln = R.log(len);
+            Ln.a[0] = 1;
+            for (int i = 1; i < len; ++i) {
+                ll val = (i < n ? a[i] : 0);
+                Ln.a[i] = val - Ln.a[i];
+                if (Ln.a[i] < 0) Ln.a[i] += MOD;
+            }
+            R = R * Ln;
+            R.mod_xk(len);
+
+            if (len >= n) break;
         }
+
         R.mod_xk(n);
         return R;
     }
