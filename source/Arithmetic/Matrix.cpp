@@ -1,8 +1,11 @@
-struct Matrix {
+// need Modular arithmetic structure to run
+// ex: matrix a(n, n), a.det(); a.pow(k);
+
+struct matrix {
     int n, m;
     vector<vector<Modular>> a;
 
-    Matrix(int n, int m) : n(n), m(m), a(n, vector<Modular>(m)) {}
+    matrix(int n, int m) : n(n), m(m), a(n, vector<Modular>(m)) {}
 
     vector<Modular>& operator[] (int i) { return a[i]; }
     const vector<Modular>& operator[] (int i) const { return a[i]; }
@@ -23,17 +26,17 @@ struct Matrix {
         }
     }
 
-    static Matrix eye(int n) {
-        Matrix res(n, n);
+    static matrix eye(int n) {
+        matrix res(n, n);
         for (int i = 0; i < n; i++) {
             res[i][i] = 1;
         }
         return res;
     }
 
-    Matrix operator *(const Matrix& b) {
+    matrix operator *(const matrix& b) {
         assert(m == b.n);
-        Matrix res(n, b.m);
+        matrix res(n, b.m);
         for (int i = 0; i < n; i++) {
             for (int k = 0; k < b.m; k++) {
                 for (int j = 0; j < m; j++) {
@@ -44,10 +47,10 @@ struct Matrix {
         return res;
     }
 
-    Matrix pow(long long k) const {
+    matrix pow(long long k) const {
         assert(n == m);
-        Matrix res = eye(n);
-        Matrix base = *this;
+        matrix res = eye(n);
+        matrix base = *this;
         while (k > 0) {
             if (k & 1) res = res * base;
             base = base * base;
@@ -58,29 +61,36 @@ struct Matrix {
 
     Modular det() const {
         assert(n == m);
-        Matrix tmp = *this;
-        Modular ans = 1;
+        matrix tmp = *this;
+        Modular res = 1;
 
         for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                while (tmp[j][i].x != 0) {
-                    ll t = tmp[i][i].x / tmp[j][i].x;
+            int pivot = i;
+            while (pivot < n && tmp[pivot][i].x == 0) pivot++;
 
-                    if (t != 0) {
-                        Modular factor(t);
-                        for (int k = i; k < n; k++) {
-                            tmp[i][k] -= tmp[j][k] * factor;
-                        }
-                    }
+            if (pivot == n) return 0;
 
-                    swap(tmp[i], tmp[j]);
-                    ans *= Modular(-1);
-                }
+            if (pivot != i) {
+                swap(tmp.a[i], tmp.a[pivot]);
+                res = res * Modular(-1);
             }
 
-            ans *= tmp[i][i];
-            if (ans.x == 0) return 0;
+            res *= tmp[i][i];
+            Modular inv = inverse(tmp[i][i]);
+
+            for (int j = i; j < n; j++) {
+                tmp[i][j] *= inv;
+            }
+
+            for (int j = 0; j < n; j++) {
+                if (j != i && tmp[j][i].x != 0) {
+                    Modular factor = tmp[j][i];
+                    for (int k = i; k < n; k++) {
+                        tmp[j][k] -= factor * tmp[i][k];
+                    }
+                }
+            }
         }
-        return ans;
+        return res;
     }
 };

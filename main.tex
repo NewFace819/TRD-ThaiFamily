@@ -7,7 +7,7 @@
 % Uncomment below to use Korean
 \usepackage{kotex}
 
-\teamnote{VNU-HCM}{HCMUS - ThaiFamily}{Le Kien Thanh, Vo Thanh Hai, Do Gia Huy}
+\teamnote{University of Science, VNUHCM}{HCMUS - ThaiFamily}{Le Kien Thanh, Vo Thanh Hai, Do Gia Huy}
 
 \ShowUsage
 \ShowComplexity
@@ -22,10 +22,6 @@
 
 \section{Misc}
 
-\Algorithm{Generic Template}
-{}{}
-{cpp}{source/Misc/boiler_plate.cpp}
-
 \Algorithm{FastIO}
 {}{}
 {cpp}{source/Misc/FastIO.cpp}
@@ -38,6 +34,13 @@
 {}{}
 {batch}{source/Misc/Bench_Mark.bat}
 
+\Algorithm{Min Plus Convolution}
+{}{}
+{cpp}{source/Misc/MinPlusconvolution.cpp}
+
+% Thay dòng \Algorithm bị lỗi bằng dòng này:
+\subsection{Mathematics} % Hoặc \subsection tùy cấp độ bạn muốn
+\input{source/Misc/Mathematics.tex}
 
 \Algorithm{CP Sublime 3 Build}
 {}{}
@@ -95,17 +98,9 @@
 {}{}
 {cpp}{source/Geometry/boiler_plate.cpp}
 
-\Algorithm{Complex Numbers Utils}  % Tên hiển thị trong teamnote
-{}{ }                               % Bạn có thể thêm chú thích / description nếu muốn
-{cpp}{source/Geometry/complex.cpp}
-
-\Algorithm{Manhattan Minimum Spanning Tree}{}{ }
-{cpp}{source/Geometry/manhattan_spanning_tree.cpp}
-
-
-\Algorithm{Smallest Enclosing Circle}
+\Algorithm{Circles Intersect}
 {}{}
-{cpp}{source/Geometry/smallest_enclosing_circle.cpp}
+{cpp}{source/Geometry/Circles_Intersect.cpp}
 
 \Algorithm{Circle vs CCW Polygon Intersection}
 {}{}
@@ -115,17 +110,30 @@
 {}{}
 {cpp}{source/Geometry/Circle_vs_Line_Intersect.cpp}
 
-\Algorithm{Circles Intersect}
-{}{}
-{cpp}{source/Geometry/Circles_Intersect.cpp}
+\Algorithm{Complex Numbers Utils}  % Tên hiển thị trong teamnote
+{}{ }                               % Bạn có thể thêm chú thích / description nếu muốn
+{cpp}{source/Geometry/Complex.cpp}
 
 \Algorithm{Hull Diameter}
 {}{}
 {cpp}{source/Geometry/Hull_Diameter.cpp}
 
+\Algorithm{Manhattan Minimum Spanning Tree}{}{ }
+{cpp}{source/Geometry/manhattan_spanning_tree.cpp}
+
 \Algorithm{Point in Poly}
 {}{}
 {cpp}{source/Geometry/Point_In_Poly.cpp}
+
+\Algorithm{Smallest Enclosing Circle}
+{}{}
+{cpp}{source/Geometry/smallest_enclosing_circle.cpp}
+
+
+
+
+
+
 
 
 
@@ -146,6 +154,10 @@
 \Algorithm{Block Cut Tree}
 {}{}
 {cpp}{source/Graph/block_cut_tree.cpp}
+
+\Algorithm{Dominator Tree}
+{}{}
+{cpp}{source/Graph/DominatorTree.cpp}
 
 \Algorithm{Eulerian Path}
 {}{}
@@ -179,6 +191,16 @@
 {}{}
 {cpp}{source/Graph/two_sat.cpp}
 
+\subsection{Flow Model}
+\input{source/Graph/FlowModel.tex}
+
+
+
+
+
+
+
+
 \section{String}
 
 \Algorithm{Aho Corasick}
@@ -205,6 +227,10 @@
 {}{}
 {cpp}{source/String/ZFunction.cpp}
 
+
+
+
+
 \section{Tree}
 
 \Algorithm{Tree Line}
@@ -218,50 +244,63 @@
 
 \section{Arithmetic}
 
-\Algorithm{Extended GCD}
+\Algorithm{Big Num Long}
 {}{}
-{cpp}{source/Arithmetic/extended_gcd.cpp}
-
-\Algorithm{Diophantine}
-{}{}
-{cpp}{source/Arithmetic/diophantine.cpp}
-
+{cpp}{source/Arithmetic/big_num.cpp}
 
 \Algorithm{Chinese Remainder Theorem}
 {}{}
 {cpp}{source/Arithmetic/chinese_remainder_theorem.cpp}
 
-
-
-\Algorithm{Big Num Short}
+\Algorithm{Diophantine}
 {}{}
-{cpp}{source/Arithmetic/short_big_num.cpp}
+{cpp}{source/Arithmetic/diophantine.cpp}
 
-\Algorithm{Big Num Long}
+\Algorithm{Dirchlet Convolution}
 {}{}
-{cpp}{source/Arithmetic/big_num.cpp}
+{cpp}{source/Arithmetic/DirchletConv.cpp}
+
+\Algorithm{Extended GCD}
+{}{}
+{cpp}{source/Arithmetic/extended_gcd.cpp}
 
 \Algorithm{Gaussian Elimination (Float)}
 {}{}
 {cpp}{source/Arithmetic/Gaussian_elimination.cpp}
 
-
 \Algorithm{Gaussian Elimination (Integer)}
 {}{}
 {cpp}{source/Arithmetic/integer_gaussian.cpp}
+
+\Algorithm{Lagrange Interpol}
+{}{}
+{cpp}{source/Arithmetic/lagrange_interpol.cpp}
 
 \Algorithm{Miller Rabin}
 {}{}
 {cpp}{source/Arithmetic/miller_rabin.cpp}
 
-
 \Algorithm{Pollard Rho}
 {}{}
 {cpp}{source/Arithmetic/Pollard_Rho.cpp}
 
-\Algorithm{Lagrange Interpol}
+\Algorithm{Pythagorean Triples}
 {}{}
-{cpp}{source/Arithmetic/lagrange_interpol.cpp}
+{cpp}{source/Arithmetic/Pythagorean_Triples.cpp}
+
+\Algorithm{Big Num Short}
+{}{}
+{cpp}{source/Arithmetic/short_big_num.cpp}
+
+\Algorithm{Sqrt Mod}
+{}{}
+{cpp}{source/Arithmetic/SqrtMod.cpp}
+
+\Algorithm{Super Eratosthene}
+{}{}
+{cpp}{source/Arithmetic/Super_Ultra_Eratosthene.cpp}
+
+
 
 
 
@@ -276,25 +315,26 @@
 
 \section{Combinatorics}
 
-\Algorithm{FFT (Float)}
-{}{}
-{cpp}{source/Combinatorics/FFT.cpp}
-
 \Algorithm{FFT (Integer)}
 {}{}
 {cpp}{source/Combinatorics/FFT-NTT.cpp}
 
-\Algorithm{FFT + Poly Utilities}
+\Algorithm{FFT (Float)}
 {}{}
-{cpp}{source/Combinatorics/Poly.cpp}
+{cpp}{source/Combinatorics/FFT.cpp}
+
+\Algorithm{Matrix}
+{}{}
+{cpp}{source/Combinatorics/Matrix.cpp}
 
 \Algorithm{Modular}
 {}{}
 {cpp}{source/Combinatorics/Modular.cpp}
 
-\Algorithm{Matrix}
+\Algorithm{FFT + Poly Utilities}
 {}{}
-{cpp}{source/Combinatorics/Matrix.cpp}
+{cpp}{source/Combinatorics/Poly.cpp}
+
 
 \Algorithm{Xor Convolution}
 {}{}

@@ -51,6 +51,10 @@ ostream& operator << (ostream& out, Modular x){
     out << x.x;
     return out;
 }
+istream& operator >> (istream& in, Modular& x) {
+    in >> x.x;
+    return in;
+}
 
 
 Modular fast_pow(Modular a, ll n){
